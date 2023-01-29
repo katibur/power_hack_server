@@ -38,7 +38,15 @@ async function run() {
   try {
     const billingCollection = client.db("power_hack").collection("billingList");
 
-    app.post("/jwt", (req, res) => {
+    app.use("/login", (req, res) => {
+      const user = req.body;
+      const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: "100d",
+      });
+      res.send({ token });
+    });
+
+    app.use("/registration ", (req, res) => {
       const user = req.body;
       const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
         expiresIn: "100d",
@@ -58,6 +66,7 @@ async function run() {
       const billingList = await billingCollection.find(query).toArray();
       res.send(billingList);
     });
+
     app.put("/update-billing", async (req, res) => {
       const id = req.query.id;
       console.log(id);
